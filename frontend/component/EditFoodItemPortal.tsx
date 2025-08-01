@@ -19,12 +19,11 @@ interface EditMenuItemModalProps {
 const EditFoodItemPortal = ({ isOpen,onClose,id,name,image,price }: EditMenuItemModalProps) => {
 
     
-  const { editFoodItem, foodItems } = useFoodItemStore();
+  const { editFoodItem, isItemEditing } = useFoodItemStore();
   const [portalNode, setPortalNode] = useState<HTMLElement | null>(null);
   const [foodname, setName] = useState(name || "");
   const [foodprice, setPrice] = useState(price || "");
   const {imageUrl, handlePreviewImage, setImageUrl} = usePreviewImage();
- console.log(foodItems)
 
  useEffect(()=>{
     setImageUrl(image)
@@ -36,10 +35,13 @@ const EditFoodItemPortal = ({ isOpen,onClose,id,name,image,price }: EditMenuItem
   }, []);
 
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit =async (e: FormEvent) => {
     e.preventDefault();
-    editFoodItem({_id:id,name:foodname,image: imageUrl ?? "",price:Number(foodprice)});
+    await editFoodItem({_id:id,name:foodname,image: imageUrl ?? "",price:Number(foodprice)});
     onClose();
+    setName('');
+    setPrice('');
+    setImageUrl(null);
 
   };
 
@@ -48,7 +50,6 @@ const EditFoodItemPortal = ({ isOpen,onClose,id,name,image,price }: EditMenuItem
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center  bg-gray-900/60">
       <div className="bg-white text-gray-900 rounded-2xl shadow-2xl p-6 w-full max-w-md m-4 animate-in fade-in-0 zoom-in-95">
-        {/* Header */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Add New Menu Item</h2>
           <button onClick={onClose} className="p-1 rounded-full hover:bg-gray-100 transition">
@@ -56,9 +57,7 @@ const EditFoodItemPortal = ({ isOpen,onClose,id,name,image,price }: EditMenuItem
           </button>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-          {/* Image Upload */}
           <div>
             <label className="block text-sm font-medium mb-1">Image</label>
 
@@ -77,7 +76,6 @@ const EditFoodItemPortal = ({ isOpen,onClose,id,name,image,price }: EditMenuItem
                     <span>Upload a file</span>
                     <input id="file-upload" name="file-upload" type="file" className="sr-only" accept="image/*" onChange={handlePreviewImage} />
                   </label>
-                  {/* <p className="pl-1">or drag and drop</p> */}
                 </div>
                 <p className="text-xs text-gray-500">PNG, JPG up to 10MB</p>
               </div>)}
@@ -87,7 +85,6 @@ const EditFoodItemPortal = ({ isOpen,onClose,id,name,image,price }: EditMenuItem
 
           </div>
 
-          {/* Item Name */}
           <div>
             <label htmlFor="name" className="block text-sm font-medium">Name</label>
             <input
@@ -100,7 +97,6 @@ const EditFoodItemPortal = ({ isOpen,onClose,id,name,image,price }: EditMenuItem
             />
           </div>
 
-          {/* Item Price */}
           <div>
             <label htmlFor="price" className="block text-sm font-medium">Price</label>
             <div className="relative mt-1">
@@ -119,7 +115,6 @@ const EditFoodItemPortal = ({ isOpen,onClose,id,name,image,price }: EditMenuItem
             </div>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex justify-end gap-4 mt-4">
             <button
               type="button"
@@ -132,7 +127,7 @@ const EditFoodItemPortal = ({ isOpen,onClose,id,name,image,price }: EditMenuItem
               type="submit"
               className="py-2 px-6 rounded-lg bg-green-600 text-white font-bold hover:bg-green-700 transition"
             >
-              Edit Item
+              {isItemEditing ? 'Editing...' : 'Save Item'}
             </button>
           </div>
         </form>

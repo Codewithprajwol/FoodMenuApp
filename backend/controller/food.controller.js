@@ -22,21 +22,10 @@ export const addFood = async (req, res) => {
     const savedFood = await food.save();
     res.status(201).json(savedFood);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(500).json({ message: "Internal server error" });
   }
 }
 
-export const getSingleProduct = async (req, res) => {
-  try {
-    const food = await FoodItem.findById(req.params.id);
-    if (!food) {
-      return res.status(404).json({ message: 'item not found' });
-    }
-    res.json(food);
-  } catch (error) {
-      
-  }
-}
 
 export const deleteFood = async (req, res) => {
     try {
@@ -46,7 +35,7 @@ export const deleteFood = async (req, res) => {
         }
         res.json({ message: 'Food deleted successfully' });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: "Internal Server Error" });
     }
     }
 
@@ -67,6 +56,6 @@ export const editFood = async (req, res) => {
     }
     res.status(200).json(updatedFood);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };

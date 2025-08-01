@@ -9,22 +9,26 @@ interface FoodItem {
 }
 
 interface FoodItemStore {
-  isDeleting: boolean;
-  isLoading:boolean;
+  isItemDeleting: boolean;
+  isItemLoading: boolean;
+  isItemEditing: boolean;
+  isItemAdding: boolean;
   foodItems: FoodItem[];
   getFoodItem:()=>void;
   addFoodItem: (item: FoodItem) => void;
   removeFoodItem: (id: string) => void;
-  getSingleFoodItem:(id:string)=>void;
   editFoodItem:(item:FoodItem)=>void;
 }
 
 export const useFoodItemStore = create<FoodItemStore>((set,get) => ({
   foodItems: [],
-  isLoading:false,
-  isDeleting: false,
+  isItemLoading: false,
+  isItemDeleting: false,
+  isItemEditing: false,
+  isItemAdding: false,
 
   getFoodItem:async()=>{
+    set({isItemLoading: true});
    try{
     const response=await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/foods`, {
       method: 'GET',
@@ -33,15 +37,16 @@ export const useFoodItemStore = create<FoodItemStore>((set,get) => ({
       },
     });
     const data=await response.json();
-    set({foodItems:data})
-    console.log(response)
+    set({foodItems:data, isItemLoading: false});
 
    }catch(error){
+    set({isItemLoading: false});
        toast.error("something went wrong while fetching food items");
    }
   },
   
   addFoodItem: async ({name,image,price}) => {
+    set({isItemAdding:true});
    try{
      const response=await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/foods`, {
       method: 'POST',
@@ -56,15 +61,17 @@ export const useFoodItemStore = create<FoodItemStore>((set,get) => ({
     const newItem = await response.json();
     set((state) => ({
       foodItems: [...state.foodItems, newItem],
+      isItemAdding: false,
     }));
     toast.success('Food item added successfully');
    } catch (error) {
+    set({isItemAdding: false});
      toast.error("something went wrrong while adding food item");
    }
   },
 
   removeFoodItem: async(id) => {
-    set({isDeleting: true});
+    set({isItemDeleting: true});
     try{
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/foods/${id}`, {
       method: 'DELETE',
@@ -73,30 +80,19 @@ export const useFoodItemStore = create<FoodItemStore>((set,get) => ({
         throw new Error('Failed to delete food item');
       }
       const newItems = get().foodItems.filter(item => item._id !== id);
-     set({foodItems: newItems, isDeleting: false});
+     set({foodItems: newItems, isItemDeleting: false});
       toast.success('Food item deleted successfully');
     });
 
     }catch(error){
-      set({isDeleting: false});
+      set({isItemDeleting: false});
       toast.error("something went wrong while deleting food item");
     }
   },
 
-  getSingleFoodItem:async(id)=>{
-       try{
-    const response=await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/foods`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    const data=await response.json();
-  }catch(error){
-    console.log(error)
-  }
-},
+
   editFoodItem: async ({ _id: id, name, image, price }) => {
+    set({isItemEditing: true});
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/foods/${id}`, {
         method: 'PUT',
@@ -110,16 +106,16 @@ export const useFoodItemStore = create<FoodItemStore>((set,get) => ({
       }
       const updatedItem = await response.json();
 
-      // const updateItem= get().foodItems.map/
       set((state) => ({
         foodItems: state.foodItems.map(item => item._id === id ? updatedItem : item),
+        isItemEditing: false,
       }));
       toast.success('Food item updated successfully');
     } catch (error) {
+      set({isItemEditing: false});
       toast.error('Something went wrong while editing food item');
     }
   }
 
 }));
 
-// JX9EA83i9GTaZ5wM

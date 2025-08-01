@@ -7,29 +7,29 @@ import { useState } from 'react';
 import EditFoodItemPortal from './EditFoodItemPortal';
 
 
-type MenuItemCardProps = MenuItem
-
-const colorVariants:any = {
-  orange: 'bg-orange-400 ',
-  pink: 'bg-pink-200 ',
-  gray: 'bg-card-gray ',
+type MenuItemCardProps = MenuItem & {
+  index: number;
 };
 
+const colorVariants:string[]=['bg-[#FFDFC7]', 'bg-[#FEE6EC]', 'bg-[#F1F1F1]'];
 
-const MenuItemCard = ({ title, price, imageUrl, _id }: MenuItemCardProps) => {
+const MenuItemCard = ({ title, price, imageUrl, _id, index }: MenuItemCardProps) => {
   const { removeFoodItem } = useFoodItemStore();
   const [editModalOpen,setEditModalOpen]=useState<boolean>(false);
 
   const handleEdit = (e:React.MouseEvent<HTMLButtonElement>) => {
     setEditModalOpen(true);
   }
+  
   const handleDelete = (e:React.MouseEvent<HTMLButtonElement>) => {
     removeFoodItem(_id ?? '');
   };
+
+  const bgColor:string = colorVariants[index % colorVariants.length]; 
   
   return (
     <div className={`
-      ${colorVariants['orange']} 
+      ${bgColor} 
       p-4 rounded-2xl flex flex-col gap-3 
       shadow-md hover:shadow-lg transition-shadow duration-300
     `}>
@@ -41,16 +41,16 @@ const MenuItemCard = ({ title, price, imageUrl, _id }: MenuItemCardProps) => {
         className="w-full h-auto object-cover rounded-full aspect-square"
       />
       <div className="text-center">
-        <h3 className="font-bold text-lg text-gray-800 dark:text-gray-100">{title}</h3>
+        <h3 className="font-bold text-lg text-gray-800 ">{title}</h3>
       </div>
       <div className="flex justify-between items-center mt-auto">
-        <p className="font-bold text-xl text-gray-800 dark:text-gray-100">${price}</p>
+        <p className="font-bold text-xl text-gray-800 ">Rs.{price}</p>
         <div className="flex gap-2">
-          <button onClick={handleEdit} className="text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors">
+          <button onClick={handleEdit} className="text-gray-600 cursor-pointer hover:text-black transition-colors">
             <Pencil size={20} />
           </button>
           {editModalOpen && <EditFoodItemPortal isOpen={editModalOpen} onClose={() => setEditModalOpen(false)} id={_id ?? ''} name={title} image={imageUrl} price={price} />}
-          <button onClick={handleDelete} className="text-red-500 hover:text-red-700 dark:hover:text-red-400 transition-colors">
+          <button onClick={handleDelete} className="text-red-500 cursor-pointer hover:text-red-700 transition-colors">
             <Trash2 size={20} />
           </button>
         </div>
