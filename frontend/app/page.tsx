@@ -14,11 +14,11 @@ export default  function  HomePage() {
   const {getFoodItem,foodItems,isItemLoading}=useFoodItemStore()
    useEffect(()=>{
      getFoodItem()
-   },[])
+   },[getFoodItem])
 
 
   return (
-    <main className="min-h-screen bg-[#E9DEDE] text-gray-800  p-2 sm:p-4 md:p-6 lg:p-8 ">
+    <main className="min-h-screen bg-[#E9DEDE] text-gray-800 p-2 sm:p-4 md:p-6 lg:p-8 ">
       <div className="max-w-screen-2xl mx-auto">
         <header className="text-center mb-8">
           <h1 className="text-4xl md:text-6xl font-bold">
@@ -31,21 +31,27 @@ export default  function  HomePage() {
           <AddButton />
         </div>
       
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          {foodItems && foodItems.length > 0 && !isItemLoading ? foodItems?.map((item: any, index: number) => (
-            <MenuItemCard
-              key={item._id}
-              _id={item._id}
-              title={item.name}
-              price={item.price}
-              index={index}
-              imageUrl={item.image}
-            />
-          )):(
-            Array.from({length: 10}).map((_, index:number) => (
-              <WatchSkeleton key={index} />
-            ))
-          )}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
+           {isItemLoading ? (
+    Array.from({ length: 10 }).map((_, index) => (
+      <WatchSkeleton key={index} />
+    ))
+  ) : foodItems && foodItems.length > 0 ? (
+    foodItems.map((item, index) => (
+      <MenuItemCard
+        key={item._id}
+        _id={item._id}
+        title={item.name}
+        price={item.price}
+        index={index}
+        imageUrl={item.image}
+      />
+    ))
+  ) : (
+    <p className="text-xl font-semibold col-span-full text-center">
+      No food items available .
+    </p>
+  )}
         </div>
         <AddMobileButton />
       </div>

@@ -22,7 +22,7 @@ interface FoodItemStore {
 
 export const useFoodItemStore = create<FoodItemStore>((set,get) => ({
   foodItems: [],
-  isItemLoading: false,
+  isItemLoading: true,
   isItemDeleting: false,
   isItemEditing: false,
   isItemAdding: false,
@@ -111,9 +111,10 @@ export const useFoodItemStore = create<FoodItemStore>((set,get) => ({
         isItemEditing: false,
       }));
       toast.success('Food item updated successfully');
-    } catch (error) {
+    } catch (error:any) {
+      console.log(error)
       set({isItemEditing: false});
-      toast.error('Something went wrong while editing food item');
+      toast.error( error.message ||'Something went wrong while editing food item');
     }
   }
 

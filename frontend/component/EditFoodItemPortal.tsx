@@ -127,7 +127,7 @@ const EditFoodItemPortal = ({ isOpen,onClose,id,name,image,price }: EditMenuItem
               type="submit"
               className="py-2 px-6 rounded-lg bg-green-600 text-white font-bold hover:bg-green-700 transition"
             >
-              {isItemEditing ? 'Editing...' : 'Save Item'}
+              {isItemEditing ? 'Editing...' : 'Edit Item'}
             </button>
           </div>
         </form>

@@ -30,7 +30,7 @@ const MenuItemCard = ({ title, price, imageUrl, _id, index }: MenuItemCardProps)
   return (
     <div className={`
       ${bgColor} 
-      p-4 rounded-2xl flex flex-col gap-3 
+      p-2 sm:p-4 rounded-2xl flex flex-col gap-3 
       shadow-md hover:shadow-lg transition-shadow duration-300
     `}>
       <Image
@@ -44,8 +44,8 @@ const MenuItemCard = ({ title, price, imageUrl, _id, index }: MenuItemCardProps)
         <h3 className="font-bold text-lg text-gray-800 ">{title}</h3>
       </div>
       <div className="flex justify-between items-center mt-auto">
-        <p className="font-bold text-xl text-gray-800 ">Rs.{price}</p>
-        <div className="flex gap-2">
+        <p className="font-bold text-md sm:text-xl text-gray-800 ">Rs.{price}</p>
+        <div className="flex gap-2 flex-wrap ">
           <button onClick={handleEdit} className="text-gray-600 cursor-pointer hover:text-black transition-colors">
             <Pencil size={20} />
           </button>
